@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Green Zebra – Dashboard</title>
+  <style>
+    :root {
+      --primary: #6B21A8;
+      --primary-light: #9333EA;
+      --primary-dark: #4C1D95;
+      --accent: #D946EF;
+      --bg: #FAF5FF;
+      --card: #FFFFFF;
+      --text: #1E1B2E;
+      --muted: #6B7280;
+      --green: #059669;
+      --green-bg: #D1FAE5;
+      --amber: #D97706;
+      --amber-bg: #FEF3C7;
+      --red: #DC2626;
+      --red-bg: #FEE2E2;
+      --blue: #2563EB;
+      --blue-bg: #DBEAFE;
+      --border: #E9D5FF;
+      --shadow: 0 2px 14px rgba(107,33,168,0.09);
+      --r: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #E5D9F2;
+      display: flex; justify-content: center; align-items: flex-start;
+      min-height: 100vh; padding: 24px 16px;
+    }
+    .phone {
+      width: 390px;
+      min-height: 844px;
+      background: var(--bg);
+      border-radius: 44px;
+      box-shadow: 0 32px 80px rgba(76,29,149,0.22), 0 0 0 10px #1E1B2E;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      background: var(--primary-dark);
+      padding: 14px 28px 8px;
+      display: flex; justify-content: space-between; align-items: center;
+      color: #fff; font-size: 12px; font-weight: 600;
+    }
+
+    /* ── Top screen nav ── */
+    .screen-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex; justify-content: center; gap: 6px;
+    }
+    .snav-item {
+      display: flex; align-items: center; gap: 5px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px; font-weight: 700;
+      text-decoration: none; color: var(--muted);
+      background: transparent;
+    }
+    .snav-item.active {
+      background: var(--primary); color: #fff;
+    }
+
+    /* ── App header ── */
+    .header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 55%, var(--primary-light) 100%);
+      padding: 20px 24px 24px;
+      color: #fff;
+    }
+    .header-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px;
+    }
+    .logo { font-size: 19px; font-weight: 900; }
+    .logo em { color: #F0ABFC; font-style: normal; }
+    .bell {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.16);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 17px; position: relative; cursor: pointer;
+    }
+    .bell-dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 7px; height: 7px; background: #F472B6;
+      border-radius: 50%; border: 1.5px solid var(--primary-dark);
+    }
+    .plant-row { display: flex; align-items: center; gap: 14px; }
+    .plant-icon {
+      width: 62px; height: 62px;
+      background: rgba(255,255,255,0.14);
+      border-radius: 18px;
+      border: 1.5px solid rgba(255,255,255,0.28);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+    }
+    .plant-name { font-size: 21px; font-weight: 800; }
+    .plant-sub { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+    .health-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(5,150,105,0.22);
+      border: 1px solid rgba(110,231,183,0.4);
+      color: #6EE7B7;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; margin-top: 7px;
+    }
+    .health-pill::before { content: '●'; font-size: 7px; }
+
+    /* ── Scroll area ── */
+    .scroll {
+      flex: 1; overflow-y: auto; padding: 18px 18px 100px;
+    }
+    .scroll::-webkit-scrollbar { display: none; }
+
+    .section { font-size: 12px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.7px; margin: 16px 0 10px; }
+
+    /* ── Health score ── */
+    .health-card {
+      background: var(--card);
+      border-radius: var(--r); padding: 18px;
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 18px;
+    }
+    .ring { position: relative; width: 82px; height: 82px; flex-shrink: 0; }
+    .ring svg { transform: rotate(-90deg); }
+    .ring-num {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 900; color: var(--primary); line-height: 1;
+    }
+    .ring-num span { font-size: 10px; color: var(--muted); font-weight: 600; margin-top: 1px; }
+    .health-text h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .health-text p { font-size: 12px; color: var(--muted); line-height: 1.45; }
+
+    /* ── Sensor grid ── */
+    .sensor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .sensor-card {
+      background: var(--card); border-radius: var(--r); padding: 15px;
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+    }
+    .s-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+    .s-label { font-size: 10px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.4px; }
+    .s-value { font-size: 26px; font-weight: 900; line-height: 1; margin: 3px 0; }
+    .s-card-temp .s-value  { color: #F97316; }
+    .s-card-hum .s-value   { color: var(--blue); }
+    .s-card-soil .s-value  { color: var(--green); }
+    .s-card-light .s-value { color: #CA8A04; }
+    .s-status {
+      font-size: 10px; font-weight: 700; padding: 2px 7px;
+      border-radius: 20px; display: inline-block; margin-top: 5px;
+    }
+    .ok   { background: var(--green-bg); color: var(--green); }
+    .warn { background: var(--amber-bg); color: var(--amber); }
+
+    /* ── Alerts ── */
+    .alert {
+      background: var(--card); border-radius: var(--r); padding: 13px 15px;
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 9px;
+    }
+    .alert-ico {
+      width: 38px; height: 38px; border-radius: 11px;
+      display: flex; align-items: center; justify-content: center; font-size: 19px;
+      flex-shrink: 0;
+    }
+    .alert-ico.warn { background: var(--amber-bg); }
+    .alert-ico.ok   { background: var(--green-bg); }
+    .alert h4 { font-size: 13px; font-weight: 700; }
+    .alert p  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .alert-time { font-size: 10px; color: var(--muted); font-weight: 600; margin-left: auto; flex-shrink: 0; }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: flex-end; justify-content: space-around;
+      padding: 0 8px 20px;
+      box-shadow: 0 -3px 16px rgba(107,33,168,0.07);
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 10px 10px 0; cursor: pointer;
+      text-decoration: none; color: var(--muted);
+      flex: 1;
+    }
+    .nav-item .ni { font-size: 22px; }
+    .nav-label { font-size: 9px; font-weight: 700; }
+    .nav-item.active .nav-label { color: var(--primary); }
+
+    /* Integrated FAB */
+    .nav-fab-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      margin-top: -20px; flex: 1; cursor: pointer; text-decoration: none;
+    }
+    .nav-fab {
+      width: 54px; height: 54px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      border-radius: 17px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 0 4px var(--card), 0 6px 20px rgba(107,33,168,0.38);
+    }
+    .nav-fab-label { font-size: 9px; font-weight: 700; color: var(--primary); margin-top: 4px; }
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>●●●● WiFi 🔋</span>
+  </div>
+
+  <!-- Top screen switcher -->
+  <div class="screen-nav">
+    <a href="index.html"        class="snav-item active">🏠 Home</a>
+    <a href="analytics.html"   class="snav-item">📊 Data</a>
+    <a href="camera.html"      class="snav-item">📷 Scan</a>
+    <a href="gamification.html" class="snav-item">🏆 Race</a>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-row">
+      <div class="logo">The Green<em>Zebra</em></div>
+      <div class="bell">🔔<div class="bell-dot"></div></div>
+    </div>
+    <div class="plant-row">
+      <div class="plant-icon">🌸</div>
+      <div>
+        <div class="plant-name">Phalaenopsis #3</div>
+        <div class="plant-sub">Living Room · 14 weeks</div>
+        <div class="health-pill">Healthy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="scroll">
+
+    <div class="section">Overall Health</div>
+    <div class="health-card">
+      <div class="ring">
+        <svg width="82" height="82" viewBox="0 0 82 82">
+          <circle cx="41" cy="41" r="32" fill="none" stroke="#EDE9FE" stroke-width="7"/>
+          <circle cx="41" cy="41" r="32" fill="none" stroke="#7C3AED"
+            stroke-width="7" stroke-linecap="round"
+            stroke-dasharray="201" stroke-dashoffset="36"/>
+        </svg>
+        <div class="ring-num">82<span>/100</span></div>
+      </div>
+      <div class="health-text">
+        <h3>Good Condition</h3>
+        <p>Light is slightly low — move closer to a bright window this week.</p>
+      </div>
+    </div>
+
+    <div class="section">Live Sensors</div>
+    <div class="sensor-grid">
+      <div class="sensor-card s-card-temp">
+        <span class="s-icon">🌡️</span>
+        <div class="s-label">Temperature</div>
+        <div class="s-value">22°C</div>
+        <span class="s-status ok">Optimal</span>
+      </div>
+      <div class="sensor-card s-card-hum">
+        <span class="s-icon">💧</span>
+        <div class="s-label">Humidity</div>
+        <div class="s-value">58%</div>
+        <span class="s-status ok">Optimal</span>
+      </div>
+      <div class="sensor-card s-card-soil">
+        <span class="s-icon">🌱</span>
+        <div class="s-label">Soil Moisture</div>
+        <div class="s-value">34%</div>
+        <span class="s-status warn">Monitor</span>
+      </div>
+      <div class="sensor-card s-card-light">
+        <span class="s-icon">☀️</span>
+        <div class="s-label">Light</div>
+        <div class="s-value">420<span style="font-size:13px;font-weight:600;color:var(--muted)"> lux</span></div>
+        <span class="s-status warn">Low</span>
+      </div>
+    </div>
+
+    <div class="section">Recent Alerts</div>
+    <div class="alert">
+      <div class="alert-ico warn">⚠️</div>
+      <div>
+        <h4>Low Light Detected</h4>
+        <p>Dropped below 500 lux threshold</p>
+      </div>
+      <div class="alert-time">2h ago</div>
+    </div>
+    <div class="alert">
+      <div class="alert-ico ok">✅</div>
+      <div>
+        <h4>Watering Logged</h4>
+        <p>Soil moisture restored to 72%</p>
+      </div>
+      <div class="alert-time">1d ago</div>
+    </div>
+
+  </div>
+
+  <!-- Bottom nav with integrated FAB -->
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item active">
+      <span class="ni">🏠</span>
+      <span class="nav-label" style="color:var(--primary);">Home</span>
+    </a>
+    <a href="analytics.html" class="nav-item">
+      <span class="ni">📊</span>
+      <span class="nav-label">Data</span>
+    </a>
+    <a href="camera.html" class="nav-fab-wrap">
+      <div class="nav-fab">📷</div>
+      <span class="nav-fab-label">Scan</span>
+    </a>
+    <a href="gamification.html" class="nav-item">
+      <span class="ni">🏆</span>
+      <span class="nav-label">Race</span>
+    </a>
+    <div class="nav-item">
+      <span class="ni">👤</span>
+      <span class="nav-label">Profile</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
